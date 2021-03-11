@@ -9,8 +9,6 @@ URL:            http://www.pnp4nagios.org/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:        pnp4nagios.logrotate.conf
 Source2:        pnp4nagios-npcd.sysvinit
-Source3:        pnp4nagios-README.fedora
-Patch1:         pnp4nagios-httpd24.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  autoconf, automake, libtool
@@ -19,6 +17,8 @@ BuildRequires:  perl(Time::HiRes)
 Requires:       nagios
 Requires:       rrdtool-perl
 Requires:       php-gd
+Requires:       php-xml
+
 Requires(post): chkconfig
 Requires(preun): chkconfig
 Requires(preun): initscripts
@@ -31,10 +31,8 @@ and stores them automatically into RRD-databases.
 
 %prep
 %setup -q
-%patch1 -p1
 autoreconf
 
-cp -p %{SOURCE3} README.fedora
 sed -i -e 's/^INSTALL_OPTS="-o $nagios_user -g $nagios_grp"/INSTALL_OPTS=""/' \
     configure
 sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
@@ -109,7 +107,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog COPYING INSTALL README README.fedora
+%doc AUTHORS ChangeLog COPYING INSTALL README
 %doc THANKS contrib/
 %dir %{_sysconfdir}/pnp4nagios
 %config(noreplace) %attr(0640,root,nagios) %{_sysconfdir}/pnp4nagios/process_perfdata.cfg
